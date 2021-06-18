@@ -1,0 +1,7 @@
+START TRANSACTION;
+  ALTER TABLE "film_actor" DROP CONSTRAINT fk_actor;
+  ALTER TABLE "film_actor" DROP CONSTRAINT fk_film;
+
+
+  DROP TABLE film_actor
+COMMIT;

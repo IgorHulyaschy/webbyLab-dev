@@ -1,0 +1,29 @@
+{
+  "name": "webbylab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon ./src/app.js",
+    "lint": "eslint --init"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "config": "^3.3.6",
+    "dotenv": "^10.0.0",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-joi-router": "^8.0.0",
+    "koa-router": "^10.0.0",
+    "pg": "^8.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.28.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4",
+    "nodemon": "^2.0.7"
+  }
+}
