@@ -17,7 +17,7 @@ npm i
 ```
 ./migrations/up/1.Film.sql
 ./migrations/up/2.Actor.sql
-./migrations/up/3.Film.sql
+./migrations/up/3.Film-Actor.sql
 ```
 ![Relations](https://github.com/IgorHulyaschy/webbyLab-dev/blob/master/db.jpg)
 
