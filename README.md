@@ -2,7 +2,7 @@
 ```
 npm i
 ```
-##Then create file in root ".env" and insert data:
+## Then create file in root ".env" and insert data:
 <ul>
     <li>PORT=3001</li> // If port would not be 3001, u must to change value in front-connection
     <li>DB_USER</li>
@@ -11,7 +11,17 @@ npm i
     <li>DB_PASS</li>
     <li>DB_PORT</li>
 </ul>
-##Finally:
+
+## Then to migrate tables to your local PostgreSQL
+
+```
+./migrations/up/1.Film.sql
+./migrations/up/2.Actor.sql
+./migrations/up/3.Film.sql
+```
+![Relations](./db)
+
+## Finally:
 
 ```
 npm run serve

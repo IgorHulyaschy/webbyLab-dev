@@ -43,9 +43,10 @@ class Controller {
   }
 
   static async getFilmInfo(ctx) {
+    const {id} = ctx.request.params
     ctx.status = 200;
     ctx.body = (
-      await FilmDB.getFilmInfo()
+      await FilmDB.getFilmInfo(id)
     )
   }
 }
