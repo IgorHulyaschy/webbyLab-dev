@@ -12,7 +12,7 @@ npm i
     <li>DB_PORT</li>
 </ul>
 
-## Then to migrate tables to your local PostgreSQL
+## Then migrate tables to your local PostgreSQL database:
 
 ```
 ./migrations/up/1.Film.sql

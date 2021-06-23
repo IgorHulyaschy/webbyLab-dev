@@ -109,6 +109,49 @@ class FilmDB {
     )
   }
 
+  static getData(data) {
+    const arr = [];
+
+    data.forEach((item) => {
+      if(item.includes('Title: ')) {
+        arr.push((item.split('Title: ')).splice(1, 1)) 
+      }
+      if(item.includes('Release Year: ')) {
+        arr.push((item.split('Release Year: ')).splice(1, 1))
+      }
+      if(item.includes('Format: ')) {
+        arr.push((item.split('Format: ')).splice(1, 1))
+      }
+      if(item.includes('Stars: ')) {
+        arr.push((item.split('Stars: ')).splice(1, 1))
+      }
+    })
+    const res = [];
+    let i = 0;
+    while(i < arr.length) {
+      let obj = {};
+      obj.films_name = arr[i][0]
+      obj.date_of_release = arr[i+1][0]
+      obj.format = arr[i+2][0]
+      let actors = arr[i+3][0].split(', ')
+      const result = [];
+      actors.forEach((item) => {
+        result.push(item.split(" "))
+      })
+      const actor = [];
+      result.forEach((item) => {
+        const o2 = {};
+        o2.fname = item[0]
+        o2.lname = item[1]
+        actor.push(o2)
+      })
+      obj.actors = actor;
+      res.push(obj)
+      i+=4;
+    }
+    return res;
+  }
+
   static async getFilmInfo(id) {
     const filmResponse = await db.query(
       `SELECT *

@@ -38,7 +38,7 @@ class Controller {
 
   static async deleteFilm(ctx) {
     const {id} = ctx.request.body
-    ctx.status = 200;
+    ctx.status = 204;
     await FilmDB.deleteFilm(id)
   }
 
@@ -48,6 +48,15 @@ class Controller {
     ctx.body = (
       await FilmDB.getFilmInfo(id)
     )
+  }
+
+  static async createFilmWithFile(ctx) {
+    const data = ctx.request.body
+    const res = FilmDB.getData(data)
+    res.forEach((item) => {
+      FilmDB.createFilm(item.films_name, item.date_of_release, item.format, item.actors)
+    })
+    ctx.status = 200;
   }
 }
 
