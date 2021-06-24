@@ -5,12 +5,20 @@ const {FilmDB} = require('./model/service')
 class Controller {
   static async createFilm(ctx) {
     const {films_name, date_of_release, format, actors} = ctx.request.body;
-    
-    const film = await FilmDB.createFilm(films_name, date_of_release, format, actors)
-    ctx.status = 201;
-    ctx.body = {
-      film
+    try{
+      const film = await FilmDB.createFilm(films_name, date_of_release, format, actors)
+      ctx.status = 201;
+      ctx.body = {
+        film
+      }
+    } catch (err) {
+      const error = err.message
+      ctx.status = 400;
+      ctx.body = {
+        error
+      }
     }
+    
   }
 
   static async getFilmsInOrder(ctx) {
@@ -52,11 +60,19 @@ class Controller {
 
   static async createFilmWithFile(ctx) {
     const data = ctx.request.body
-    const res = FilmDB.getData(data)
-    res.forEach((item) => {
-      FilmDB.createFilm(item.films_name, item.date_of_release, item.format, item.actors)
-    })
-    ctx.status = 200;
+    if(data != "") {
+      const res = FilmDB.getData(data)
+      res.forEach((item) => {
+        FilmDB.createFilm(item.films_name, item.date_of_release, item.format, item.actors)
+      })
+      ctx.status = 200;
+    }
+    else {
+      ctx.status = 404;
+      ctx.body = {
+        message: "File is empty"
+      } 
+    }
   }
 }
 

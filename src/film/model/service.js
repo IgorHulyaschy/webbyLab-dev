@@ -4,11 +4,20 @@ const db = require('../../database/database');
 
 class FilmDB {
   static async createFilm(films_name, date_of_release, format, actors) {
-    const filmResponse = await db.query(
+    const filmResponse = await db
+    .query(
       `INSERT INTO "films" (films_name, date_of_release, format)
       VALUES ('${films_name}', '${date_of_release}', '${format}')
       RETURNING *`
     )
+    .catch((err) => {
+      if(err.constraint === "unique_film") {
+        const error = new Error("Film with the same name already exists")
+
+        throw error;
+      }
+      throw new Error(err.message);
+    });
 
     actors.map( async (item)=> {
       const actorResponse = await db.query(
@@ -16,6 +25,7 @@ class FilmDB {
         VALUES ('${item.fname}', '${item.lname}') 
         RETURNING *`
       )
+
       await db.query(
         `INSERT INTO "film_actor" (id_film, id_actor)
         VALUES (${{...filmResponse.rows[0]}.id}, ${{...actorResponse.rows[0]}.id})`
@@ -110,47 +120,48 @@ class FilmDB {
   }
 
   static getData(data) {
-    const arr = [];
+      const arr = [];
 
-    data.forEach((item) => {
-      if(item.includes('Title: ')) {
-        arr.push((item.split('Title: ')).splice(1, 1)) 
-      }
-      if(item.includes('Release Year: ')) {
-        arr.push((item.split('Release Year: ')).splice(1, 1))
-      }
-      if(item.includes('Format: ')) {
-        arr.push((item.split('Format: ')).splice(1, 1))
-      }
-      if(item.includes('Stars: ')) {
-        arr.push((item.split('Stars: ')).splice(1, 1))
-      }
-    })
-    const res = [];
-    let i = 0;
-    while(i < arr.length) {
-      let obj = {};
-      obj.films_name = arr[i][0]
-      obj.date_of_release = arr[i+1][0]
-      obj.format = arr[i+2][0]
-      let actors = arr[i+3][0].split(', ')
-      const result = [];
-      actors.forEach((item) => {
-        result.push(item.split(" "))
+      data.forEach((item) => {
+        if(item.includes('Title: ')) {
+          arr.push((item.split('Title: ')).splice(1, 1)) 
+        }
+        if(item.includes('Release Year: ')) {
+          arr.push((item.split('Release Year: ')).splice(1, 1))
+        }
+        if(item.includes('Format: ')) {
+          arr.push((item.split('Format: ')).splice(1, 1))
+        }
+        if(item.includes('Stars: ')) {
+          arr.push((item.split('Stars: ')).splice(1, 1))
+        }
       })
-      const actor = [];
-      result.forEach((item) => {
-        const o2 = {};
-        o2.fname = item[0]
-        o2.lname = item[1]
-        actor.push(o2)
-      })
-      obj.actors = actor;
-      res.push(obj)
-      i+=4;
+      const res = [];
+      let i = 0;
+      while(i < arr.length) {
+        let obj = {};
+        obj.films_name = arr[i][0]
+        obj.date_of_release = arr[i+1][0]
+        obj.format = arr[i+2][0]
+        let actors = arr[i+3][0].split(', ')
+        const result = [];
+        actors.forEach((item) => {
+          result.push(item.split(" "))
+        })
+        const actor = [];
+        result.forEach((item) => {
+          const o2 = {};
+          o2.fname = item[0]
+          o2.lname = item[1]
+          actor.push(o2)
+        })
+        obj.actors = actor;
+        res.push(obj)
+        i+=4;
+      }
+      return res;
     }
-    return res;
-  }
+  
 
   static async getFilmInfo(id) {
     const filmResponse = await db.query(
@@ -168,6 +179,17 @@ class FilmDB {
     const actors = actorsResponse.rows.map((dataDB) => new Actor(dataDB).getActorsOfFilm())
     const film = new Film({...filmResponse.rows[0]}).getCreatedFilm();
     return {film, actors}
+  }
+
+  static async checkFilm(films_name) {
+    const response = await db.query(
+      `SELECT *
+      FROM films
+      WHERE films_name = '${films_name}'`
+    )
+    if(response.rowCount) {
+      throw new Error(`Film '${films_name}' already exist`)
+    }
   }
 }
 
